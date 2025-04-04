@@ -1,14 +1,13 @@
 package org.example;
 
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
+import java.util.Scanner;
 
 public class HiddenTiles {
     public static void main(String[] args) {
         HiddenTiles tiles = new HiddenTiles();
         tiles.createHiddenTiles();
+        System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
     }
 
     String bomb = "Bomb";
@@ -16,17 +15,17 @@ public class HiddenTiles {
 
     int minX = 0;
     int minY = 0;
-    int maxX = 16;
-    int maxY = 12;
+    int maxX = 13;
+    int maxY = 17;
 
     int numberOfBombs = 0;
 
     Random rand = new Random();
 
 
-    String[][] grid = new String[17][13];
+    String[][] grid = new String[14][18];
 
-    public void createHiddenTiles() {
+    public String[][] createHiddenTiles() {
         for(int i = 0; i < this.grid.length; i++) {
             for(int j = 0; j < this.grid[i].length; j++) {
                 this.grid[i][j] = this.safe;
@@ -56,7 +55,7 @@ public class HiddenTiles {
                 numberOfBombs++;
             }
         }
-        System.out.println(Arrays.deepToString(grid).replace("], ", "]\n"));
+        return this.grid;
+//        System.out.println(Arrays.deepToString(grid).replace("], ", "]\n"));
     }
-
 }
