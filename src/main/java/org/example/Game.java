@@ -11,6 +11,8 @@ public class Game {
     Scanner scanner = new Scanner(System.in);
     HiddenTiles hiddenTiles = new HiddenTiles();
     boolean gameFinished = false;
+    int rowValue;
+    int colValue;
 
     public void Gamer() {
         Tiles tiles = new Tiles();
@@ -23,25 +25,54 @@ public class Game {
         while(!gameFinished) {
             System.out.println("This is the updated minesweeper grid:");
             System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
-            System.out.println("Pick row number (0-13): ");
-            int row = scanner.nextInt();
-            System.out.println("Pick column number (0-17): ");
-            int column = scanner.nextInt();
 
-            if(finalTiles[row][column].equals("Bomb")) {
+            //INPUT VALIDATIONS
+            while(true){
+                System.out.println("Pick row number (1-14): ");
+                if(scanner.hasNextInt()) {
+                    this.rowValue = scanner.nextInt();
+
+                    if(this.rowValue >= 1 && this.rowValue <= 14) {
+                        break;
+                    } else {
+                        System.out.println("Invalid input, please try again with a number between 1-14");
+                    }
+                } else {
+                    System.out.println("Invalid input, please try again with a number between 1-14");
+                    scanner.next();
+                }
+            }
+
+            while(true){
+                System.out.println("Pick column number (1-18): ");
+                if(scanner.hasNextInt()) {
+                    this.colValue = scanner.nextInt();
+
+                    if(this.colValue >= 1 && this.colValue <= 18) {
+                        break;
+                    } else {
+                        System.out.println("Invalid input, please try again with a number between 1-18");
+                    }
+                } else {
+                    System.out.println("Invalid input, please try again with a number between 1-18");
+                    scanner.next();
+                }
+            }
+//            System.out.println("Pick row number (1-14): ");
+//            int row = scanner.nextInt();
+
+//            System.out.println("Pick column number (1-18): ");
+//            int column = scanner.nextInt();
+
+            if(finalTiles[this.rowValue][this.colValue].equals("Bomb")) {
                 gameFinished = true;
                 System.out.println(Arrays.deepToString(hiddenTiles.grid).replace("], ", "]\n"));
                 System.out.println("The final grid looks like this ^");
                 System.out.println("GGs, you hit a bomb");
             } else{
-                initialTiles[row][column] = finalTiles[row][column];
-                System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+                initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
+                //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
             }
         }
-//        System.out.println("Enter row number (0-13): ");
-//        int row = scanner.nextInt();
-//        System.out.println("Enter column number (0-17): ");
-//        int column = scanner.nextInt();
     }
-
 }

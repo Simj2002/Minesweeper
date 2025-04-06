@@ -13,17 +13,17 @@ public class HiddenTiles {
     String bomb = "Bomb";
     String safe = "Safe";
 
-    int minX = 0;
-    int minY = 0;
-    int maxX = 13;
-    int maxY = 17;
+    int minX = 1;
+    int minY = 1;
+    int maxX = 14;
+    int maxY = 18;
 
     int numberOfBombs = 0;
 
     Random rand = new Random();
 
 
-    String[][] grid = new String[14][18];
+    String[][] grid = new String[15][19];
 
     public String[][] createHiddenTiles() {
         for(int i = 0; i < this.grid.length; i++) {
@@ -55,6 +55,20 @@ public class HiddenTiles {
                 numberOfBombs++;
             }
         }
+
+        this.grid[0][0] = "Empty";
+
+        // Changes top row to numbers 1 - 18
+        for(int i = 1; i < this.grid[0].length; i++) {
+            this.grid[0][i] = String.valueOf(i);
+            this.grid[0][i] = String.format("%4d", i);
+        }
+
+        for(int j = 1; j < this.grid.length; j++) {
+            this.grid[j][0] = String.valueOf(j);
+            this.grid[j][0] = String.format("%6d", j);
+        }
+
         return this.grid;
 //        System.out.println(Arrays.deepToString(grid).replace("], ", "]\n"));
     }
