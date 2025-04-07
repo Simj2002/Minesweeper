@@ -11,7 +11,7 @@ public class Tiles {
 
     String tiles = "Tile";
 
-    String[][] grid = new String[15][19];
+    String[][] grid = new String[9][11];
 
     public String[][] createTiles() {
         for(int i = 1; i < this.grid.length; i++) {
@@ -31,12 +31,12 @@ public class Tiles {
         // Changes top row to numbers 1 - 18
         for(int i = 1; i < this.grid[0].length; i++) {
             this.grid[0][i] = String.valueOf(i);
-            this.grid[0][i] = String.format("%4d", i);
+            //this.grid[0][i] = String.format("%4d", i);
         }
 
         for(int j = 1; j < this.grid.length; j++) {
             this.grid[j][0] = String.valueOf(j);
-            this.grid[j][0] = String.format("%6d", j);
+            //this.grid[j][0] = String.format("%6d", j);
         }
 
         //System.out.println(this.grid);

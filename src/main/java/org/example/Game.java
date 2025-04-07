@@ -9,7 +9,7 @@ public class Game {
         game.Gamer();
     }
     Scanner scanner = new Scanner(System.in);
-    HiddenTiles hiddenTiles = new HiddenTiles();
+    //HiddenTiles hiddenTiles = new HiddenTiles();
     boolean gameFinished = false;
     int rowValue;
     int colValue;
@@ -24,15 +24,16 @@ public class Game {
 
         while(!gameFinished) {
             System.out.println("This is the updated minesweeper grid:");
-            System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+            //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+            generateGrid(initialTiles);
 
             //INPUT VALIDATIONS
             while(true){
-                System.out.println("Pick row number (1-14): ");
+                System.out.println("Pick row number (1-8): ");
                 if(scanner.hasNextInt()) {
                     this.rowValue = scanner.nextInt();
 
-                    if(this.rowValue >= 1 && this.rowValue <= 14) {
+                    if(this.rowValue >= 1 && this.rowValue <= 8) {
                         break;
                     } else {
                         System.out.println("Invalid input, please try again with a number between 1-14");
@@ -44,11 +45,11 @@ public class Game {
             }
 
             while(true){
-                System.out.println("Pick column number (1-18): ");
+                System.out.println("Pick column number (1-10): ");
                 if(scanner.hasNextInt()) {
                     this.colValue = scanner.nextInt();
 
-                    if(this.colValue >= 1 && this.colValue <= 18) {
+                    if(this.colValue >= 1 && this.colValue <= 10) {
                         break;
                     } else {
                         System.out.println("Invalid input, please try again with a number between 1-18");
@@ -66,12 +67,67 @@ public class Game {
 
             if(finalTiles[this.rowValue][this.colValue].equals("Bomb")) {
                 gameFinished = true;
-                System.out.println(Arrays.deepToString(hiddenTiles.grid).replace("], ", "]\n"));
+                //System.out.println(Arrays.deepToString(hiddenTiles.grid).replace("], ", "]\n"));
+                generateGrid(finalTiles);
                 System.out.println("The final grid looks like this ^");
                 System.out.println("GGs, you hit a bomb");
             } else{
+                //initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
+
+                if (finalTiles[this.rowValue][this.colValue].equals("Safe")) {
+                    recursiveFunction(finalTiles, initialTiles, this.rowValue, this.colValue);
+                }
                 initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
                 //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+            }
+        }
+    }
+
+    private String padRight(String input, int length) {
+        return String.format("%-" + length + "s", input);
+    }
+
+    public String[][] generateGrid(String[][] test) {
+        for(int i = 0; i < test.length; i++) {
+            for(int j = 0; j < test[0].length; j++) {
+                System.out.print(padRight(test[i][j], 7));
+            }
+            System.out.println();
+        }
+        return test;
+    }
+
+
+    public void recursiveFunction(String[][] finalTiles, String[][] initialTiles, int rowValue, int colValue) {
+//        if (!finalTiles[rowValue][colValue].equals("Safe") || initialTiles[rowValue][colValue].equals("Safe")) {
+//            return;
+//        }
+
+        if(!(finalTiles[rowValue][colValue]).equals("Safe") && !(finalTiles[rowValue][colValue]).matches("\\d+")) {
+            return;
+        }
+
+        if (!initialTiles[rowValue][colValue].equals("Tile")) {
+            return;
+        }
+
+        initialTiles[rowValue][colValue] = finalTiles[rowValue][colValue];
+
+        if(!(finalTiles[rowValue][colValue]).equals("Safe")){
+            return;
+        }
+
+        for (int t = -1; t <= 1; t++) {
+            for (int s = -1; s <= 1; s++) {
+                if (t == 0 && s == 0) continue;
+
+                int newRow = rowValue + t;
+                int newCol = colValue + s;
+
+                if (newRow >= 0 && newRow < finalTiles.length &&
+                        newCol >= 0 && newCol < finalTiles[0].length) {
+                    recursiveFunction(finalTiles, initialTiles, newRow, newCol);
+                }
             }
         }
     }
