@@ -80,6 +80,28 @@ public class Game {
                 initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
                 //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
             }
+            //initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
+            int totalNonBombTiles = 0;
+            int shownNonBombTiles = 0;
+            for(int i = 1; i < finalTiles.length; i++) {
+                for(int j = 1; j < finalTiles[0].length; j++) {
+                    if(!initialTiles[i][j].equals("Tile") == finalTiles.equals("Bomb")) {
+                        shownNonBombTiles++;
+                        //System.out.println(shownNonBombTiles);
+                    }
+
+                    if(!finalTiles[i][j].equals("Safe") && !finalTiles[i][j].matches("\\d+")) {
+                        totalNonBombTiles++;
+                        //System.out.println(totalNonBombTiles);
+                    }
+                }
+            }
+
+            if(shownNonBombTiles == totalNonBombTiles){
+                gameFinished = true;
+                generateGrid(finalTiles);
+                System.out.println("Game finished!");
+            }
         }
     }
 
