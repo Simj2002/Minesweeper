@@ -90,7 +90,18 @@ public class Game {
     public String[][] generateGrid(String[][] test) {
         for(int i = 0; i < test.length; i++) {
             for(int j = 0; j < test[0].length; j++) {
-                System.out.print(padRight(test[i][j], 7));
+                if(i == 0 || j == 0) {
+                    System.out.print(padRight(test[i][j], 7));
+                } else if(test[i][j].equals("Tile")){
+                    System.out.print("\u001B[36m" + padRight(test[i][j], 7) + "\u001B[0m");
+                } else if(test[i][j].equals("Safe")){
+                    System.out.print("\u001B[32m" + padRight(test[i][j], 7) + "\u001B[0m");
+//                    System.out.print(padRight(test[i][j], 7));
+                } else if(test[i][j].equals("Bomb")){
+                    System.out.print("\u001B[31m" + padRight(test[i][j], 7) + "\u001B[0m");
+                } else {
+                    System.out.print(padRight(test[i][j], 7));
+                }
             }
             System.out.println();
         }
