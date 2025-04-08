@@ -20,20 +20,50 @@ public class Game {
     //Minimum and maximum value of grid (excluding coordinates)
     final int minX = 1;
     final int minY = 1;
-    final int maxX = 8;
-    final int maxY = 10;
+    int maxX = 8;
+    int maxY = 10;
+
+    int numOfBombs = 0;
 
     //User chooses either "Flag" or "Tile"
     String choice = "";
 
 
     public void Gamer() {
+        while(true){
+            System.out.println("Enter either easy, medium or hard");
+            String difficulty = scanner.next().trim();
+
+            if (!difficulty.equalsIgnoreCase("Easy") && !difficulty.equalsIgnoreCase("Medium") && !difficulty.equalsIgnoreCase("Hard")) {
+                System.out.println("Invalid choice. Please enter difficulty: Easy, Medium, Hard");
+                continue;
+            }
+
+            if(difficulty.equals("easy")){
+                this.maxX = 8;
+                this.maxY = 10;
+                this.numOfBombs = 3;
+                break;
+            } else if(difficulty.equals("medium")){
+                this.maxX = 15;
+                this.maxY = 19;
+                this.numOfBombs = 20;
+                break;
+            } else if(difficulty.equals("hard")){
+                this.maxX = 26;
+                this.maxY = 34;
+                this.numOfBombs = 40;
+                break;
+            }
+        }
+
+
         //Create initial tiles grid
         Tiles tiles = new Tiles();
-        String[][] initialTiles = tiles.createTiles();
+        String[][] initialTiles = tiles.createTiles(maxX+1,maxY+1);
         //Create final tiles grid
         HiddenTiles hiddenTiles = new HiddenTiles();
-        String[][] finalTiles = hiddenTiles.createHiddenTiles();
+        String[][] finalTiles = hiddenTiles.createHiddenTiles(maxX,maxY, numOfBombs);
 
 
         while(!gameFinished) {
@@ -54,7 +84,7 @@ public class Game {
                 //User enters row coordinate and input validation used as well
                 int selectedRow;
                 while (true) {
-                    System.out.println("Pick row number (1-8): ");
+                    System.out.println("Pick row number (1-" + (maxX) + "): ");
                     if (scanner.hasNextInt()) {
                         selectedRow = scanner.nextInt();
                         if (selectedRow >= this.minX && selectedRow <= maxX) {
@@ -63,7 +93,7 @@ public class Game {
                             System.out.println("Invalid input, please try again with a number between 1 and 8.");
                         }
                     } else {
-                        System.out.println("Invalid input, please enter a number between 1 and 8.");
+                        System.out.println("Invalid input, please enter a number between 1 and " + (maxY) + ".");
                         scanner.next();
                     }
                 }
@@ -71,7 +101,7 @@ public class Game {
                 //User enters column coordinate and input validation used as well
                 int selectedCol;
                 while (true) {
-                    System.out.println("Pick column number (1-10): ");
+                    System.out.println("Pick column number (1-" + (this.maxY) + "): ");
                     if (scanner.hasNextInt()) {
                         selectedCol = scanner.nextInt();
                         if (selectedCol >= minY && selectedCol <= maxY) {
@@ -80,7 +110,7 @@ public class Game {
                             System.out.println("Invalid input, please try again with a number between 1 and 10.");
                         }
                     } else {
-                        System.out.println("Invalid input, please enter a number between 1 and 10.");
+                        System.out.println("Invalid input, please enter a number between 1 and " + (this.maxY) + ".");
                         scanner.next();
                     }
                 }
@@ -121,7 +151,7 @@ public class Game {
             for(int i = 1; i < finalTiles.length; i++) {
                 for(int j = 1; j < finalTiles[0].length; j++) {
                     //tiles and flag tiles in initial grid compared to bomb tiles in final grid - non bomb tiles increase counter
-                    if((!initialTiles[i][j].equals("Tile") == finalTiles.equals("Bomb")) || (!initialTiles[i][j].equals("Flag") == finalTiles.equals("Bomb"))) {
+                    if((!initialTiles[i][j].equals("Tile") == finalTiles[i][j].equals("Bomb")) || (!initialTiles[i][j].equals("Flag") == finalTiles[i][j].equals("Bomb"))) {
                         shownNonBombTiles++;
                         //System.out.println(shownNonBombTiles);
                     }
@@ -202,8 +232,7 @@ public class Game {
                 int newRow = rowValue + t;
                 int newCol = colValue + s;
 
-                if (newRow >= 0 && newRow < finalTiles.length &&
-                        newCol >= 0 && newCol < finalTiles[0].length) {
+                if (newRow >= 0 && newRow < finalTiles.length && newCol >= 0 && newCol < finalTiles[0].length) {
                     recursiveFunction(finalTiles, initialTiles, newRow, newCol);
                 }
             }

@@ -5,7 +5,7 @@ public class Tiles {
 
     public static void main(String[] args) {
         Tiles tiles = new Tiles();
-        tiles.createTiles();
+        tiles.createTiles(9,11);
         System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
     }
 
@@ -15,7 +15,8 @@ public class Tiles {
     String[][] grid = new String[9][11];
 
     //Create grid of tiles
-    public String[][] createTiles() {
+    public String[][] createTiles(int maxX, int maxY) {
+        this.grid = new String[maxX][maxY];
         for(int i = 1; i < this.grid.length; i++) {
             for(int j = 1; j < this.grid[i].length; j++) {
                 this.grid[i][j] = this.tiles;

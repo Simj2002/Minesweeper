@@ -6,8 +6,8 @@ import java.util.Scanner;
 public class HiddenTiles {
     public static void main(String[] args) {
         HiddenTiles tiles = new HiddenTiles();
-        tiles.createHiddenTiles();
-        //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+//        tiles.createHiddenTiles(8,10);
+        System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
     }
 
     String bomb = "Bomb";
@@ -16,11 +16,11 @@ public class HiddenTiles {
     //Minimum and maximum value of grid (excluding coordinates)
     final int minX = 1;
     final int minY = 1;
-    final int maxX = 8;
-    final int maxY = 10;
+    int maxX = 8;
+    int maxY = 10;
 
     int numberOfBombs = 0;
-    int numberOfBombsNeeded = 3;
+    int numberOfBombsNeeded = 7;
 
     Random rand = new Random();
 
@@ -28,8 +28,12 @@ public class HiddenTiles {
     String[][] grid = new String[9][11];
 
 
-    public String[][] createHiddenTiles() {
+    public String[][] createHiddenTiles(int maxX,int maxY,int mines) {
+        this.numberOfBombsNeeded = mines;
         //Set all tiles to safe
+        this.maxX = maxX;
+        this.maxY = maxY;
+        grid = new String[maxX + 1][maxY + 1];
         for(int i = 0; i < this.grid.length; i++) {
             for(int j = 0; j < this.grid[i].length; j++) {
                 this.grid[i][j] = this.safe;
@@ -41,8 +45,10 @@ public class HiddenTiles {
         Set<String> usedbombs = new HashSet<>();
         while(numberOfBombs < this.numberOfBombsNeeded){
             //Generate random number between the grid coordinates for x and y
-            int randomNum = rand.nextInt((maxX)) + minX;
-            int randomNum1 = rand.nextInt((maxY)) + minY;
+//            int randomNum = rand.nextInt((maxX)) + minX;
+//            int randomNum1 = rand.nextInt((maxY)) + minY;
+            int randomNum = rand.nextInt(this.maxX - minX + 1) + minX;
+            int randomNum1 = rand.nextInt(this.maxY - minY + 1) + minY;
 
             //Make key then add bomb key to hashset if it doesn't already have key
             String key = randomNum + "," + randomNum1;
