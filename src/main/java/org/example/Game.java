@@ -1,5 +1,4 @@
 package org.example;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Game {
@@ -8,88 +7,126 @@ public class Game {
         Game game = new Game();
         game.Gamer();
     }
+
     Scanner scanner = new Scanner(System.in);
-    //HiddenTiles hiddenTiles = new HiddenTiles();
+
+    //boolean to end game when you win or lose
     boolean gameFinished = false;
+
+    //coordinate values
     int rowValue;
     int colValue;
 
+    //Minimum and maximum value of grid (excluding coordinates)
+    final int minX = 1;
+    final int minY = 1;
+    final int maxX = 8;
+    final int maxY = 10;
+
+    //User chooses either "Flag" or "Tile"
+    String choice = "";
+
+
     public void Gamer() {
+        //Create initial tiles grid
         Tiles tiles = new Tiles();
         String[][] initialTiles = tiles.createTiles();
+        //Create final tiles grid
         HiddenTiles hiddenTiles = new HiddenTiles();
         String[][] finalTiles = hiddenTiles.createHiddenTiles();
 
-        System.out.println("This is the minesweeper grid:");
 
         while(!gameFinished) {
-            System.out.println("This is the updated minesweeper grid:");
-            //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+            System.out.println("This is the minesweeper grid:");
+
             generateGrid(initialTiles);
 
-            //INPUT VALIDATIONS
-            while(true){
-                System.out.println("Pick row number (1-8): ");
-                if(scanner.hasNextInt()) {
-                    this.rowValue = scanner.nextInt();
+            while(true) {
+                System.out.println("Enter whether you want to pick a tile or add a flag: \"Flag\" for adding flag, \"Tile\" for picking a tile");
+                choice = scanner.next().trim();
 
-                    if(this.rowValue >= 1 && this.rowValue <= 8) {
-                        break;
-                    } else {
-                        System.out.println("Invalid input, please try again with a number between 1-14");
-                    }
-                } else {
-                    System.out.println("Invalid input, please try again with a number between 1-14");
-                    scanner.next();
+                //Input validation
+                if (!choice.equalsIgnoreCase("Flag") && !choice.equalsIgnoreCase("Tile")) {
+                    System.out.println("Invalid choice. Please enter either \"Flag\" or \"Tile\".");
+                    continue;
                 }
+
+                //User enters row coordinate and input validation used as well
+                int selectedRow;
+                while (true) {
+                    System.out.println("Pick row number (1-8): ");
+                    if (scanner.hasNextInt()) {
+                        selectedRow = scanner.nextInt();
+                        if (selectedRow >= this.minX && selectedRow <= maxX) {
+                            break;
+                        } else {
+                            System.out.println("Invalid input, please try again with a number between 1 and 8.");
+                        }
+                    } else {
+                        System.out.println("Invalid input, please enter a number between 1 and 8.");
+                        scanner.next();
+                    }
+                }
+
+                //User enters column coordinate and input validation used as well
+                int selectedCol;
+                while (true) {
+                    System.out.println("Pick column number (1-10): ");
+                    if (scanner.hasNextInt()) {
+                        selectedCol = scanner.nextInt();
+                        if (selectedCol >= minY && selectedCol <= maxY) {
+                            break;
+                        } else {
+                            System.out.println("Invalid input, please try again with a number between 1 and 10.");
+                        }
+                    } else {
+                        System.out.println("Invalid input, please enter a number between 1 and 10.");
+                        scanner.next();
+                    }
+                }
+
+                this.rowValue = selectedRow;
+                this.colValue = selectedCol;
+
+                //Insert a flag if user chooses flag
+                if (choice.equalsIgnoreCase("Flag")) {
+                    initialTiles[rowValue][colValue] = "Flag";
+                }
+                break;
             }
 
-            while(true){
-                System.out.println("Pick column number (1-10): ");
-                if(scanner.hasNextInt()) {
-                    this.colValue = scanner.nextInt();
 
-                    if(this.colValue >= 1 && this.colValue <= 10) {
-                        break;
-                    } else {
-                        System.out.println("Invalid input, please try again with a number between 1-18");
-                    }
-                } else {
-                    System.out.println("Invalid input, please try again with a number between 1-18");
-                    scanner.next();
-                }
-            }
-//            System.out.println("Pick row number (1-14): ");
-//            int row = scanner.nextInt();
-
-//            System.out.println("Pick column number (1-18): ");
-//            int column = scanner.nextInt();
-
-            if(finalTiles[this.rowValue][this.colValue].equals("Bomb")) {
+            //Skip loop if choice and tile is a Flag
+            if(initialTiles[this.rowValue][this.colValue].equals("Flag") && this.choice.equalsIgnoreCase("Flag")) {
+                continue;
+            //End game if user hits a bomb
+            } else if(finalTiles[this.rowValue][this.colValue].equals("Bomb")) {
                 gameFinished = true;
-                //System.out.println(Arrays.deepToString(hiddenTiles.grid).replace("], ", "]\n"));
                 generateGrid(finalTiles);
                 System.out.println("The final grid looks like this ^");
                 System.out.println("GGs, you hit a bomb");
-            } else{
-                //initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
-
+            }else{
+                //if user hits a safe tile, do the recursive function
                 if (finalTiles[this.rowValue][this.colValue].equals("Safe")) {
                     recursiveFunction(finalTiles, initialTiles, this.rowValue, this.colValue);
                 }
+                //Otherwise return just the number
                 initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
-                //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
             }
             //initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
+
+            //Win conditions
             int totalNonBombTiles = 0;
             int shownNonBombTiles = 0;
             for(int i = 1; i < finalTiles.length; i++) {
                 for(int j = 1; j < finalTiles[0].length; j++) {
-                    if(!initialTiles[i][j].equals("Tile") == finalTiles.equals("Bomb")) {
+                    //tiles and flag tiles in initial grid compared to bomb tiles in final grid - non bomb tiles increase counter
+                    if((!initialTiles[i][j].equals("Tile") == finalTiles.equals("Bomb")) || (!initialTiles[i][j].equals("Flag") == finalTiles.equals("Bomb"))) {
                         shownNonBombTiles++;
                         //System.out.println(shownNonBombTiles);
                     }
 
+                    //Find how many bombs in final grid
                     if(!finalTiles[i][j].equals("Safe") && !finalTiles[i][j].matches("\\d+")) {
                         totalNonBombTiles++;
                         //System.out.println(totalNonBombTiles);
@@ -97,55 +134,63 @@ public class Game {
                 }
             }
 
+            //If both initial grid and final grid contain same number on counter - user wins
             if(shownNonBombTiles == totalNonBombTiles){
                 gameFinished = true;
                 generateGrid(finalTiles);
-                System.out.println("Game finished!");
+                System.out.println("Game finished! You have won! GGs!");
             }
         }
     }
 
+    //Method to add padding to the grid
     private String padRight(String input, int length) {
         return String.format("%-" + length + "s", input);
     }
 
-    public String[][] generateGrid(String[][] test) {
-        for(int i = 0; i < test.length; i++) {
-            for(int j = 0; j < test[0].length; j++) {
+    //Generate grid with padding and colour
+    public String[][] generateGrid(String[][] gridTest) {
+        for(int i = 0; i < gridTest.length; i++) {
+            for(int j = 0; j < gridTest[0].length; j++) {
                 if(i == 0 || j == 0) {
-                    System.out.print(padRight(test[i][j], 7));
-                } else if(test[i][j].equals("Tile")){
-                    System.out.print("\u001B[36m" + padRight(test[i][j], 7) + "\u001B[0m");
-                } else if(test[i][j].equals("Safe")){
-                    System.out.print("\u001B[32m" + padRight(test[i][j], 7) + "\u001B[0m");
-//                    System.out.print(padRight(test[i][j], 7));
-                } else if(test[i][j].equals("Bomb")){
-                    System.out.print("\u001B[31m" + padRight(test[i][j], 7) + "\u001B[0m");
-                } else {
-                    System.out.print(padRight(test[i][j], 7));
+                    System.out.print(padRight(gridTest[i][j], 7));
+                } else if(gridTest[i][j].equals("Tile")){
+                    //Add cyan colour
+                    System.out.print("\u001B[36m" + padRight(gridTest[i][j], 7) + "\u001B[0m");
+                } else if(gridTest[i][j].equals("Safe")){
+                    //Add green colour
+                    System.out.print("\u001B[32m" + padRight(gridTest[i][j], 7) + "\u001B[0m");
+                } else if(gridTest[i][j].equals("Bomb")){
+                    //Add red colour
+                    System.out.print("\u001B[31m" + padRight(gridTest[i][j], 7) + "\u001B[0m");
+                } else if(gridTest[i][j].equals("Flag")){
+                    //Add yellow colour
+                    System.out.print("\u001B[33m" + padRight(gridTest[i][j], 7) + "\u001B[0m");
+                }else {
+                    //Else white colour
+                    System.out.print(padRight(gridTest[i][j], 7));
                 }
             }
             System.out.println();
         }
-        return test;
+        return gridTest;
     }
 
 
     public void recursiveFunction(String[][] finalTiles, String[][] initialTiles, int rowValue, int colValue) {
-//        if (!finalTiles[rowValue][colValue].equals("Safe") || initialTiles[rowValue][colValue].equals("Safe")) {
-//            return;
-//        }
-
+        //Don't continue if tile is not "Safe" or a number
         if(!(finalTiles[rowValue][colValue]).equals("Safe") && !(finalTiles[rowValue][colValue]).matches("\\d+")) {
             return;
         }
 
+        //Don't check if tile is already shown
         if (!initialTiles[rowValue][colValue].equals("Tile")) {
             return;
         }
 
         initialTiles[rowValue][colValue] = finalTiles[rowValue][colValue];
 
+        //Stop once there is a number
         if(!(finalTiles[rowValue][colValue]).equals("Safe")){
             return;
         }
@@ -165,3 +210,64 @@ public class Game {
         }
     }
 }
+
+
+
+
+
+//if(finalTiles[this.rowValue][this.colValue].equals("Bomb")) {
+//gameFinished = true;
+////System.out.println(Arrays.deepToString(hiddenTiles.grid).replace("], ", "]\n"));
+//generateGrid(finalTiles);
+//                System.out.println("The final grid looks like this ^");
+//                System.out.println("GGs, you hit a bomb");
+//            } else if(initialTiles[this.rowValue][this.colValue].equals("Flag") && this.choice.equalsIgnoreCase("Flag")) {
+//        continue;
+//        }else{
+//        //initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
+//
+//        if (finalTiles[this.rowValue][this.colValue].equals("Safe")) {
+//recursiveFunction(finalTiles, initialTiles, this.rowValue, this.colValue);
+//                }
+//initialTiles[this.rowValue][this.colValue] = finalTiles[this.rowValue][this.colValue];
+//        //System.out.println(Arrays.deepToString(tiles.grid).replace("], ", "]\n"));
+//        }
+
+//INPUT VALIDATIONS
+//            while(true){
+//                System.out.println("Pick row number (1-8): ");
+//                if(scanner.hasNextInt()) {
+//                    this.rowValue = scanner.nextInt();
+//
+//                    if(this.rowValue >= 1 && this.rowValue <= 8) {
+//                        break;
+//                    } else {
+//                        System.out.println("Invalid input, please try again with a number between 1-14");
+//                    }
+//                } else {
+//                    System.out.println("Invalid input, please try again with a number between 1-14");
+//                    scanner.next();
+//                }
+//            }
+//
+//            while(true){
+//                System.out.println("Pick column number (1-10): ");
+//                if(scanner.hasNextInt()) {
+//                    this.colValue = scanner.nextInt();
+//
+//                    if(this.colValue >= 1 && this.colValue <= 10) {
+//                        break;
+//                    } else {
+//                        System.out.println("Invalid input, please try again with a number between 1-18");
+//                    }
+//                } else {
+//                    System.out.println("Invalid input, please try again with a number between 1-18");
+//                    scanner.next();
+//                }
+//            }
+//            System.out.println("Pick row number (1-14): ");
+//            int row = scanner.nextInt();
+
+//        if (!finalTiles[rowValue][colValue].equals("Safe") || initialTiles[rowValue][colValue].equals("Safe")) {
+//            return;
+//        }
